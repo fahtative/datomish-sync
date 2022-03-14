@@ -1,0 +1,8 @@
+{:paths ["src"]
+ :deps  {org.clojure/core.unify       {:mvn/version "0.5.7"}
+         com.taoensso/timbre          {:mvn/version "5.1.2"}
+         org.clojure/core.async       {:mvn/version "1.3.618"}
+         slingshot/slingshot          {:mvn/version "0.12.2"}
+         com.taoensso/sente           {:mvn/version "1.16.2"}
+         io.github.fahtative/datomish
+         {:sha "afe1e1afbd9679a0b6548160cdefb5bcdb9236d0"}}}

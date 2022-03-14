@@ -1,0 +1,7 @@
+#+TITLE: Datomish-Sync
+
+Datomish-Sync is a library for syncing datomic-like databases across the web. \\
+It builds on [[Datomish]] and [[Sente]].
+
+* Design Notes
+The client is responsible for translating entity ids. \\
