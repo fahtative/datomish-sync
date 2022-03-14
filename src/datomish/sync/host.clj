@@ -241,21 +241,22 @@
 (defn matching-latest-datom
   "Find latest datom matching given [<eid> <attr>]."
   [[entity attr] db]
-  (d/q '[:find [?e ?a ?v ?t ?b]
+  (d/q '[:find [?e ?a ?v ?t]
          :in $ ?e ?a
-         :where [?e ?a ?v ?t ?b]]
+         :where [?e ?a ?v ?t]]
        db entity attr))
 
 (defn datom-tx
   "Get tx-id of a datom."
-  [datom] (nth 3))
+  [datom] (nth datom 3))
 
 (defn tx-match-last-tx?
   "Test whether a tx's tx-id matches the latest similar tx of a db.
   Two txs are similar if their eids and attrs matched."
   [datom db]
-  (= (some->> db (matching-latest-datom datom) datom-tx)
-     (datom-tx datom)))
+  (if-let [tx (some->> db (matching-latest-datom datom) datom-tx)]
+    (= tx (datom-tx datom))
+    true))
 
 (defn only-matching-last-tx
   "Write-auth wrapper which allows writing only if a client
@@ -263,7 +264,7 @@
   [write-auth]
   (fn [uid db datoms]
     (if (every? #(or #_(same-author-as-last-tx? uid % db)
-                     (tx-match-last-tx? db %))
+                     (tx-match-last-tx? % db))
                 datoms)
       (write-auth uid db datoms)
       {:status :fail

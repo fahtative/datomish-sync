@@ -5,4 +5,4 @@
          slingshot/slingshot          {:mvn/version "0.12.2"}
          com.taoensso/sente           {:mvn/version "1.16.2"}
          io.github.fahtative/datomish
-         {:sha "afe1e1afbd9679a0b6548160cdefb5bcdb9236d0"}}}
+         {:sha "cb6080d889b6a39805b51b73d9b2a828bb1d34dd"}}}

@@ -1,7 +1,7 @@
 (ns datomish.sync.client
   (:require
    [taoensso.sente :as sente]
-   [datom.api :as d]
+   [datomish.api :as d]
    [cljs.core.async :as a]
    [datomish.sync.common :refer [meta-datom?]]
    [datascript.core :as ds]))
@@ -222,14 +222,14 @@
                (remove nil?))
           host-tx (->> tx-host-meta-builder-pairs (map first))]
       (let [{:keys [tempids]}
-            (d/transact dbc host-tx {::host-tick true})
+            (d/transact! dbc host-tx {::host-tick true})
             tx-data (->> tx-host-meta-builder-pairs
                          (mapcat (fn [[_ b]] (b tempids)))
                          (remove nil?)
                          keep-max-tx-of-identical-host-meta-entities)]
-        (d/transact dbc
-          tx-data
-          {::host-tick true})))))
+        (d/transact! dbc
+                     tx-data
+                     {::host-tick true})))))
 
 ;; -------------------------------------------------- ;;
 ;;;; Connection
@@ -266,7 +266,7 @@
   [{:as tick :keys [data dfilter]} {:as connection :keys [read-reg host]}]
   (doseq [[dbc on-failure] (get @read-reg dfilter)]
     (if-not (host-error? data)
-      (transact-host-tick! @dbc host dfilter data)
+      (transact-host-tick! dbc host dfilter data)
       (on-failure data))))
 
 (defn host-listen!
@@ -476,10 +476,10 @@
                    (do (when-let [fail-fn (::on-failure tx-meta)]
                          (fail-fn host datom-filter reply))
                        (when-let [tx (not-empty (maybe-reverse @dbc report))]
-                         (d/transact dbc tx {::reverse-effect? true})))
-                   (do (d/transact dbc (host-reply-confirm->tx-data
-                                        reply host db
-                                        (d/schema dbc)))
+                         (d/transact! dbc tx {::reverse-effect? true})))
+                   (do (d/transact! dbc (host-reply-confirm->tx-data
+                                         reply host db
+                                         (d/schema dbc)))
                        (when-let [success-fn (::on-success tx-meta)]
                          (success-fn host datom-filter reply)))))))))
 
@@ -489,7 +489,7 @@
   Provide <key> in config-map to avoid duplicated syncs.
 
   When transacting to the db, optionally include the tx-meta:
-  :datomish.sync.client/on-failure (fn [error-map filter conn] ...)
+  :datomish.sync.client/on-failure (fn [host filter error-map] ...)
   :datomish.sync.client/on-success (fn [filter conn] ...)
   :datomish.sync.client/fail-reverse? <boolean>"
   ([conn dbc datom-filter] (sync-write conn dbc datom-filter {}))
