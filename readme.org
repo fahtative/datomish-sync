@@ -1,6 +1,6 @@
 #+TITLE: Datomish-Sync
 
 Datomish-Sync is a library for syncing datomic-like databases across the web. \\
-It builds on [[Datomish]] and [[Sente]].
+It's built on [[https://github.com/fahtative/datomish][Datomish]] and [[https://github.com/ptaoussanis/sente][Sente]]. \\
 
 TBD
